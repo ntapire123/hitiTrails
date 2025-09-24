@@ -1,10 +1,14 @@
 const express = require("express");
 const app = express();
-const moongose = require("mongoose");
+const mongoose = require("mongoose");
 const port = 3000;
+const listing = require("./models/listing.js");
+
+
+
 
 async function main() {
-   await moongose.connect('mongodb://127.0.0.1:27017/wanderLust');
+   await mongoose.connect('mongodb://127.0.0.1:27017/wanderLust');
 }
 
 app.listen(port,()=>{
@@ -15,8 +19,10 @@ app.get("/",(req,res)=>{
     res.send("Hi I am root")
 })
 
-Main().then((result)=>{
+main().then((result)=>{
     console.log("Connection success");
 }).catch((err)=>{
  console.log("some error happened")
 })
+
+
