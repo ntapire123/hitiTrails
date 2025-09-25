@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wanderlust</title>
+</head>
+<body>
+    <h1><%= listing.title %></h1>
+    <% if (listing.image && listing.image.length > 0) { %>
+        <img src="<%= listing.image[0].url %>" alt="Image for <%= listing.title %>" width="300">
+    <% } %>
+    <p><strong>Description:</strong> <%= listing.description %></p>
+    <p><strong>Price:</strong> <%= listing.price %></p>
+    <p><strong>Location:</strong> <%= listing.location %>, <%= listing.country %></p>
+    <a href="/listings">Back to Listings</a>
+</body>
+</html>

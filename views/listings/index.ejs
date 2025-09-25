@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Listings</title>
+</head>
+<body>
+    <h1>All Listings</h1>
+    <ul>
+        <% for(listing of allListings) { %>
+            <li>
+                <h2><a href="/listings/<%= listing._id%>"><%= listing.title %></a></h2>
+                <% if (listing.image && listing.image.length > 0) { %>
+                    <img src="<%= listing.image[0].url %>" alt="Image for <%= listing.title %>" width="200">
+                <% } %>
+                <p><%= listing.description %></p>
+                <p>Price: <%= listing.price %></p>
+                <p>Location: <%= listing.location %>, <%= listing.country %></p>
+            </li>
+        <% }; %>
+    </ul>
+</body>
+</html>
