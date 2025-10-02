@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update</title>
+  </head>
+  <body>
+    <form method="post" action="/listings/<%= Listing._id  %>/edit?_method=put">
+      <label for="title">Title:</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        value="<%= Listing.title %>"
+      /><br /><br />
+
+      <label for="description">Description:</label>
+      <textarea id="description" name="description">
+<%= Listing.description %></textarea
+      >
+
+      <label for="price">Price:</label>
+      <input
+        type="number"
+        id="price"
+        name="price"
+        value="<%= Listing.price %>"
+      /><br /><br />
+
+      <label for="location">Location:</label>
+      <input
+        type="text"
+        id="location"
+        name="location"
+        value="<%= Listing.location %>"
+      /><br /><br />
+
+      <label for="country">Country:</label>
+      <input
+        type="text"
+        id="country"
+        name="country"
+        value="<%= Listing.country %>"
+      /><br /><br />
+
+      <label for="imageurl">Image URL:</label>
+      <input
+        type="url"
+        id="imageUrl"
+        name="image[0][url]"
+        value="<%= Listing.image[0].url %>"
+      /><br /><br />
+
+      <label for="imageFilename">Image filename:</label>
+      <input
+        type="text"
+        id="imageFilename"
+        name="image[0][filename]"
+        value="<%= Listing.image[0].filename %>"
+      />
+
+      <button type="submit">Update Listing</button>
+    </form>
+  </body>
+</html>

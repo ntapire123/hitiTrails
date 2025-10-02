@@ -1,22 +1,45 @@
-<!DOCTYPE html>
-<html>
+<% layout('layouts/bp') -%>
 <head>
-    <title>All Listings</title>
+  <title>All Listings</title>
 </head>
+
 <body>
-    <h1>All Listings</h1>
-    <ul>
-        <% for(listing of allListings) { %>
-            <li>
-                <h2><a href="/listings/<%= listing._id%>"><%= listing.title %></a></h2>
-                <% if (listing.image && listing.image.length > 0) { %>
-                    <img src="<%= listing.image[0].url %>" alt="Image for <%= listing.title %>" width="200">
-                <% } %>
-                <p><%= listing.description %></p>
-                <p>Price: <%= listing.price %></p>
-                <p>Location: <%= listing.location %>, <%= listing.country %></p>
-            </li>
-        <% }; %>
-    </ul>
+  <h1>All Listings</h1>
+  <ul>
+
+    <% for(let Listing of allListings) { %>
+      <li>
+        <h2><a href="/listings/<%=Listing._id %>">
+            <%= Listing.title %>
+          </a></h2>
+        <% if (Listing.image && Listing.image.length> 0) { %>
+          <img src="<%= Listing.image[0].url %>" alt="Image for <%= Listing.title %>" width="200" />
+          <% } %>
+            <p>
+              <%= Listing.description %>
+            </p>
+            <p>
+              Price: &nbsp;रु&nbsp; <%= Listing.price.toLocaleString("en-In") %>
+            </p>
+            <p>Location: <%= Listing.location %>, <%= Listing.country %>
+            </p>
+      </li>
+
+
+
+
+      <li>
+        <form method="get" action="/listings/<%= Listing._id %>/edit">
+          <button>Update the form</button>
+        </form>
+        
+        <form method="post" action="/listings/<%= Listing._id %>/delete?_method=delete">
+          <button>Delete the form</button>
+        </form>
+      </li>
+
+
+      <% }; %>
+  </ul>
 </body>
-</html>
+
