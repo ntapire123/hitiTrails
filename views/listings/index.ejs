@@ -1,39 +1,18 @@
-<% layout('layouts/bp') -%>
-
-<head>
-  <title>All Listings</title>
-</head>
-
-<body>
-  <h1>All Listings</h1>
-
-  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-xs-1">
-    <% for(let Listing of allListings) { %>
-    <div class="col mb-4">
-      <a href="/listings/<%=Listing._id%>" class="card-link col">
-        <div class="card col">
-          <img
-            src="<%= Listing.image[0].url %>"
-            class="card-img-top"
-            style="height: 20rem"
-          />
-          <div class="card-img-overlay">
-            <p class="card-text">See more Info.</p>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">
-              <b> <%= Listing.title %></b>
-            </h5>
-            <p><%= Listing.description %></p>
-            <p>
-              Price: &nbsp;रु&nbsp;<%= Listing.price.toLocaleString("en-In")
-              %>/night
-            </p>
-            <p>Location: <%= Listing.location %>, <%= Listing.country %></p>
-          </div>
-        </div>
-      </a>
-    </div>
-    <% }; %>
-  </div>
-</body>
+<% layout("/layouts/bp") %>
+<h3>All Listings</h3>
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
+    <% for(let listing of allListings) { %>
+        <a href="/listings/<%= listing._id %>" class="listing-link">
+            <div class="card col listing-card">
+                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image" style="height: 20rem;">
+                <div class="card-img-overlay"></div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <b><%= listing.title %></b> <br>
+                        &#8377; <%= listing.price.toLocaleString("en-IN") %> / night
+                    </p>
+                </div>
+            </div>
+        </a>
+    <% } %>
+</div>

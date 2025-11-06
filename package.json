@@ -1,19 +1,29 @@
 {
   "name": "wanderlust",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "Diganta",
+  "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "ejs": "^3.1.10",
+    "ejs": "^3.1.9",
     "ejs-mate": "^4.0.0",
-    "express": "^5.1.0",
+    "express": "^4.18.2",
+    "joi": "^17.13.3",
     "method-override": "^3.0.0",
-    "mongoose": "^8.18.1"
-  }
+    "mongoose": "^8.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ntapire123/Wanderlust-.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ntapire123/Wanderlust-/issues"
+  },
+  "homepage": "https://github.com/ntapire123/Wanderlust-#readme"
 }
