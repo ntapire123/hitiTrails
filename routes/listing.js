@@ -4,6 +4,7 @@ const ExpressError = require("../utils/ExpressError");
 const wrapAsync = require("../utils/wrapAsync");
 const { listingSchema, reviewSchema } = require("../Schema.js");
 const Listing = require("../models/listing.js");
+const {isLoggedIn} = require("../middleware.js")
 
 
 const validateListing = (req, res, next) => {
@@ -23,17 +24,23 @@ router.get( "/", wrapAsync(async (req, res) => {
 }));
 
 // New Route (Show form to create new listing)
-router.get("/new", (req, res) => {
-    res.render("listings/newList.ejs");
+router.get("/new",isLoggedIn, (req, res) => {
+ 
+    
+        res.render("listings/newList.ejs");
+   
 });
 
 // Show Route (Show one individual listing)
 router.get("/:id", wrapAsync(async (req, res) => {
     let { id } = req.params;
-    const listing = await Listing.findById(id).populate("reviews");
+    const listing = await Listing.findById(id)
+    .populate("reviews")
+    .populate("owner");
     if (!listing) {
         throw new ExpressError(404, "Listing Not Found!");
     }
+      console.log(listing.owner.email)
     res.render("listings/moreInfo.ejs", { listing });
 }));
 
@@ -46,7 +53,7 @@ router.post( "/", validateListing, wrapAsync(async (req, res, next) => {
 }));
 
 // Edit Route (Show form to edit a listing)
-router.get("/:id/edit", wrapAsync(async (req, res) => {
+router.get("/:id/edit",isLoggedIn, wrapAsync(async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
      if (!listing) {
@@ -55,6 +62,7 @@ router.get("/:id/edit", wrapAsync(async (req, res) => {
        
 
     }
+    
     res.render("listings/update.ejs", { listing });
 }));
 
