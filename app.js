@@ -1,4 +1,9 @@
 // 1. REQUIRES
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
@@ -18,14 +23,16 @@ const userRouter = require("./routes/user.js");
 
 // 2. APP SETUP & DB CONNECTION
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 main()
   .then(() => console.log("Connection to DB successful"))
   .catch((err) => console.log("DB connection error:", err));
 
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/wanderLust");
+  await mongoose.connect(
+    process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderLust",
+  );
 }
 
 app.set("view engine", "ejs");
@@ -38,7 +45,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
 const sessionOptions = {
-  secret: "mysupersecretcode",
+  secret: process.env.SECRET || "mysupersecretcode",
   resave: false,
   saveUninitialized: true,
   cookie: {
