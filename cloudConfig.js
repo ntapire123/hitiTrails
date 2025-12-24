@@ -1,20 +1,20 @@
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require("cloudinary");
+const cloudinaryStorage = require("multer-storage-cloudinary");
 
-cloudinary.config({
-    cloud_name : process.env.CLOUD_NAME,
-    api_key : process.env.CLOUD_API_KEY,
-    api_secret : process.env.CLOUD_API_SECRET
+// Configure Cloudinary client
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
 });
 
-
-const storage = new CloudinaryStorage({
-   cloudinary: cloudinary,
-    params: {
-        folder : 'wanderlust_devlopment',
-        allowed_formats : ['jpeg','png','jpg'],
-
-    }
+// Multer storage adapter for Cloudinary (multer-storage-cloudinary v2.x)
+const storage = cloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "Wanderlust",
+    allowed_formats: ["jpeg", "jpg", "png"],
+  },
 });
 
-module.exports = { cloudinary , storage};
+module.exports = { cloudinary, storage };
