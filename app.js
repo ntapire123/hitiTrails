@@ -23,6 +23,11 @@ const userRouter = require("./routes/user.js");
 
 // 2. DB URL + APP
 const DBURL = process.env.ATLASDB_URL;
+if (!DBURL) {
+  console.error("ERROR: ATLASDB_URL environment variable is not set!");
+  process.exit(1);
+}
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -32,7 +37,10 @@ async function main() {
 }
 main()
   .then(() => console.log("DB connected"))
-  .catch((err) => console.log("DB error:", err));
+  .catch((err) => {
+    console.error("DB connection error:", err);
+    process.exit(1);
+  });
 
 // 4. VIEW ENGINE
 app.engine("ejs", ejsMate);
@@ -56,14 +64,23 @@ store.on("error", (err) => {
   // Don't crash the app on session store errors
 });
 
+// Validate session secret
+const sessionSecret = process.env.SECRET;
+if (!sessionSecret) {
+  console.error("ERROR: SECRET environment variable is not set!");
+  process.exit(1);
+}
+
 const sessionOptions = {
   store,
-  secret: process.env.SECRET,
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
+    sameSite: "lax", // CSRF protection
   },
 };
 

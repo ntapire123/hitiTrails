@@ -30,6 +30,10 @@ module.exports.loginForm = (req, res) => {
 module.exports.login = async (req, res) => {
   req.flash("success", "Welcome back! You are logged in.");
   let redirectUrl = res.locals.redirectUrl || "/listings";
+  // Clear redirectUrl from session after using it
+  if (req.session.redirectUrl) {
+    delete req.session.redirectUrl;
+  }
   res.redirect(redirectUrl);
 };
 
