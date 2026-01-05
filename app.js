@@ -1,5 +1,4 @@
-// 1. REQUIRES
-
+// 1. ENV + REQUIRES
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -8,8 +7,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
-const ejsmate = require("ejs-mate");
+const ejsMate = require("ejs-mate");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -21,39 +21,48 @@ const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
-
-
-
-// 2. APP SETUP & DB CONNECTION
+// 2. DB URL + APP
+const DBURL = process.env.ATLASDB_URL;
 const app = express();
 const port = process.env.PORT || 3000;
 
-main()
-  .then(() => console.log("Connection to DB successful"))
-  .catch((err) => console.log("DB connection error:", err));
-
+// 3. DB CONNECTION
 async function main() {
-  await mongoose.connect(
-    process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderLust",
-  );
+  await mongoose.connect(DBURL);
 }
+main()
+  .then(() => console.log("DB connected"))
+  .catch((err) => console.log("DB error:", err));
 
+// 4. VIEW ENGINE
+app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.engine("ejs", ejsmate);
 
-// 3. MIDDLEWARE
-app.use(express.static(path.join(__dirname, "/public")));
+// 5. GLOBAL MIDDLEWARE
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
+// 6. SESSION STORE (connect-mongo v4)
+const store = MongoStore.create({
+  mongoUrl: DBURL,
+  touchAfter: 24 * 3600, // seconds
+  stringify: false,
+});
+
+store.on("error", (err) => {
+  console.log("Error in MONGO SESSION STORE", err);
+  // Don't crash the app on session store errors
+});
+
 const sessionOptions = {
-  secret: process.env.SECRET || "mysupersecretcode",
+  store,
+  secret: process.env.SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
   },
 };
@@ -61,37 +70,40 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
+// 7. PASSPORT CONFIG
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// 8. FLASH + CURRENT USER LOCALS
 app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
+  const successFlash = req.flash("success");
+  const errorFlash = req.flash("error");
+  res.locals.success = Array.isArray(successFlash) ? successFlash : [];
+  res.locals.error = Array.isArray(errorFlash) ? errorFlash : [];
   res.locals.currUser = req.user;
   next();
 });
 
-
-
-// 4. ROUTES
+// 9. ROUTES
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
 
-// 5. ERROR HANDLERS
+// 10. 404 HANDLER
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page Not Found!"));
 });
 
+// 11. ERROR HANDLER
 app.use((err, req, res, next) => {
-  let { status = 500, message = "Something went wrong" } = err;
+  const { status = 500, message = "Something went wrong" } = err;
   res.status(status).render("errors/err1.ejs", { message });
 });
 
-// 6. START THE SERVER
+// 12. START SERVER
 app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
+  console.log("Server running on port " + port);
 });

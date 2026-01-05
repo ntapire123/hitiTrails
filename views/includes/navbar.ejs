@@ -1,72 +1,69 @@
 <style>
-.search-pill {
-  align-items: center;
-  gap: 0;
-  padding: 4px 4px 4px 16px;
-  border-radius: 999px;
-  background: #ffffff;
-  border: 1px solid #ddd;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  max-width: 420px;
-}
-
-.search-input {
-  border: none;
-  box-shadow: none !important;
-  font-size: 0.95rem;
-  padding-right: 8px;
-}
-
-.search-input:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-.search-btn {
-  border-radius: 999px;
-  border: none;
-  background: #ff385c;
-  color: #fff;
-  width: 38px;
-  height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-}
-
-.search-btn i {
-  margin: 0;
-}
-
-/* hover/focus */
-.search-btn:hover {
-  background: #e23252;
-  color: #fff;
-}
-
-.search-pill:focus-within {
-  border-color: #ff385c;
-  box-shadow: 0 0 0 2px rgba(255, 56, 92, 0.2);
-}
-
-/* responsive: let it expand nicely on small screens */
-@media (max-width: 768px) {
   .search-pill {
-    width: 100%;
-    margin-top: 8px;
+    align-items: center;
+    gap: 0;
+    padding: 4px 4px 4px 16px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    max-width: 420px;
   }
-}
 
+  .search-input {
+    border: none;
+    box-shadow: none !important;
+    font-size: 0.95rem;
+    padding-right: 8px;
+  }
 
+  .search-input:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .search-btn {
+    border-radius: 999px;
+    border: none;
+    background: #ff385c;
+    color: #fff;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+  }
+
+  .search-btn i {
+    margin: 0;
+  }
+
+  .search-btn:hover {
+    background: #e23252;
+    color: #fff;
+  }
+
+  .search-pill:focus-within {
+    border-color: #ff385c;
+    box-shadow: 0 0 0 2px rgba(255, 56, 92, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .search-pill {
+      width: 100%;
+      margin-top: 8px;
+    }
+  }
 </style>
-<nav
-  class="navbar navbar-expand-md navbar-light bg-light border-bottom sticky-top"
->
+
+<nav class="navbar navbar-expand-md navbar-light bg-light border-bottom sticky-top">
   <div class="container-fluid">
     <% const logoSrc =
-    'https://res.cloudinary.com/duv7frgnx/image/upload/v1766581278/logo_xv5gfp.jpg';
+      'https://res.cloudinary.com/duv7frgnx/image/upload/v1766581278/logo_xv5gfp.jpg';
     %>
+
+    <!-- brand -->
     <a class="navbar-brand d-flex align-items-center" href="/listings">
       <img
         src="<%= logoSrc %>"
@@ -75,6 +72,8 @@
       />
       HitiTrails
     </a>
+
+    <!-- mobile toggler -->
     <button
       class="navbar-toggler"
       type="button"
@@ -83,17 +82,24 @@
     >
       <span class="navbar-toggler-icon"></span>
     </button>
+
+    <!-- collapsible content -->
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <!-- left links -->
       <div class="navbar-nav me-auto">
-        <a class="nav-link active" href="/listings">Explore</a>
+       <a class="nav-link active" href="/listings">
+
+          Explore
+        </a>
       </div>
 
-      <!-- pretty search bar -->
-      <form class="search-pill d-flex " role="search" action="/listings" method="GET">
+      <!-- center: search bar -->
+      <form class="search-pill d-flex me-3" role="search" action="/listings" method="GET">
         <input
           class="form-control search-input"
           type="search"
           name="q"
+          value="<%= typeof q !== 'undefined' ? q : '' %>"
           placeholder="Search destinations"
           aria-label="Search"
         />
@@ -101,10 +107,30 @@
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
       </form>
+
+      <!-- right: auth section -->
+      <ul class="navbar-nav ms-2">
+        <% if (!currUser) { %>
+          <!-- not logged in: show Login & Signup -->
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Log in</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/signup">Sign up</a>
+          </li>
+        <% } else { %>
+          <!-- logged in: show new listing + profile + logout -->
+          <li class="nav-item">
+            <a class="nav-link" href="/listings/new">
+              <i class="fa-solid fa-plus"></i> New Listing
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">
+              <i class="fa-solid fa-right-from-bracket"></i> Log out
+            </a>
+        <% } %>
+      </ul>
     </div>
   </div>
 </nav>
-
-<script>
-    
-</script>

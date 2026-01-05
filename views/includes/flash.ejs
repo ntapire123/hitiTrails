@@ -1,13 +1,13 @@
-<% if(success && success.length){%>
+<% if(success && Array.isArray(success) && success.length > 0){%>
     <div class="alert alert-success alert-dismissible fade show col-6 offset-3" role="alert">
-  <%=success%>
+  <%=success[0]%>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 <%}%>
 
-<% if(error && error.length){%>
-    <div class="alert alert-success alert-dismissible fade show col-6 offset-3" role="alert">
-  <%=error%>
+<% if(error && Array.isArray(error) && error.length > 0){%>
+    <div class="alert alert-danger alert-dismissible fade show col-6 offset-3" role="alert">
+  <%=error[0]%>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 <%}%>
