@@ -20,6 +20,7 @@ const ExpressError = require("./utils/ExpressError.js");
 const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+const bookingRouter = require("./routes/booking.js");
 
 // 2. DB URL + APP
 const DBURL = process.env.ATLASDB_URL;
@@ -108,6 +109,7 @@ app.use((req, res, next) => {
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
+app.use("/", bookingRouter);
 
 // 10. 404 HANDLER
 app.all("*", (req, res, next) => {

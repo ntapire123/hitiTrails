@@ -11,6 +11,10 @@ const {
   deleteListing,
   renderEditForm,
 } = require("../controller/listings.js");
+const { 
+  showBookingForm, 
+  createBooking
+} = require("../controller/booking.js");
 const multer = require("multer");
 const { storage } = require("../cloudConfig.js");
 const upload = multer({ storage });
@@ -55,5 +59,9 @@ router
 
 // Edit Route (Show form to edit a listing)// Edit Route (Show form to edit a listing)
 router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(renderEditForm));
+
+// Booking Routes
+router.get("/:id/book", isLoggedIn, showBookingForm);
+router.post("/:id/book", isLoggedIn, createBooking);
 
 module.exports = router;

@@ -1,0 +1,131 @@
+<% layout("/layouts/bp") %>
+<div class="row mt-3">
+  <div class="col-8 offset-2">
+    <h3>Book <%= listing.title %></h3>
+    <div class="card">
+      <div class="card-body">
+        <p class="card-text">
+          <strong>Location:</strong> <%= listing.location %>, <%= listing.country %><br>
+          <strong>Price:</strong> &#8377; <%= listing.price.toLocaleString("en-IN") %> per night<br>
+          <strong>Owner:</strong> <%= listing.owner.username %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-3">
+  <div class="col-8 offset-2">
+    <form method="POST" action="/listings/<%= listing._id %>/book" novalidate class="needs-validation">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="checkIn" class="form-label">Check-in Date</label>
+          <input 
+            type="date" 
+            name="checkIn" 
+            class="form-control" 
+            id="checkIn" 
+            required
+            min="<%= new Date().toISOString().split('T')[0] %>"
+          >
+          <div class="invalid-feedback">Please select a check-in date.</div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="checkOut" class="form-label">Check-out Date</label>
+          <input 
+            type="date" 
+            name="checkOut" 
+            class="form-control" 
+            id="checkOut" 
+            required
+            min="<%= new Date().toISOString().split('T')[0] %>"
+          >
+          <div class="invalid-feedback">Please select a check-out date.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="guests" class="form-label">Number of Guests</label>
+          <input 
+            type="number" 
+            name="guests" 
+            class="form-control" 
+            id="guests" 
+            min="1" 
+            value="1" 
+            required
+          >
+          <div class="invalid-feedback">Please specify number of guests.</div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="totalPrice" class="form-label">Total Price</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="totalPrice" 
+            readonly 
+            value="&#8377; <%= listing.price.toLocaleString("en-IN") %>"
+          >
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="message" class="form-label">Message to Owner (Optional)</label>
+        <textarea 
+          name="message" 
+          id="message" 
+          cols="30" 
+          rows="4" 
+          class="form-control" 
+          placeholder="Any special requests or questions for the owner..."
+          maxlength="500"
+        ></textarea>
+      </div>
+
+      <input type="hidden" name="listingId" value="<%= listing._id %>">
+      <input type="hidden" name="pricePerNight" value="<%= listing.price %>">
+      
+      <button class="btn btn-success">Confirm Booking</button>
+      <a href="/listings/<%= listing._id %>" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkInInput = document.getElementById('checkIn');
+    const checkOutInput = document.getElementById('checkOut');
+    const guestsInput = document.getElementById('guests');
+    const totalPriceInput = document.getElementById('totalPrice');
+    const pricePerNight = <%- JSON.stringify(listing.price) %>;
+
+    function calculateTotalPrice() {
+        if (checkInInput.value && checkOutInput.value) {
+            const checkIn = new Date(checkInInput.value);
+            const checkOut = new Date(checkOutInput.value);
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            
+            if (nights > 0) {
+                const totalPrice = nights * pricePerNight * guestsInput.value;
+                totalPriceInput.value = '₹' + totalPrice.toLocaleString('en-IN');
+            } else {
+                totalPriceInput.value = '₹' + pricePerNight.toLocaleString('en-IN');
+            }
+        }
+    }
+
+    checkInInput.addEventListener('change', function() {
+        checkOutInput.min = this.value;
+        if (checkOutInput.value && checkOutInput.value <= this.value) {
+            const nextDay = new Date(this.value);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkOutInput.value = nextDay.toISOString().split('T')[0];
+        }
+        calculateTotalPrice();
+    });
+
+    checkOutInput.addEventListener('change', calculateTotalPrice);
+    guestsInput.addEventListener('input', calculateTotalPrice);
+});
+</script>

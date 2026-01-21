@@ -1,0 +1,151 @@
+<% layout("/layouts/bp") %>
+<div class="row mt-3">
+  <div class="col-12">
+    <h2>Welcome, <%= currUser.username %>!</h2>
+    <p class="text-muted">Manage your listings and bookings</p>
+  </div>
+</div>
+
+<!-- My Listings Section -->
+<div class="row mt-4">
+  <div class="col-12">
+    <h3>My Listings</h3>
+    <% if(myListings.length > 0) { %>
+      <div class="row">
+        <% for(let listing of myListings) { %>
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>" style="height: 200px; object-fit: cover;">
+              <div class="card-body">
+                <h5 class="card-title"><%= listing.title %></h5>
+                <p class="card-text">
+                  <strong>Location:</strong> <%= listing.location %><br>
+                  <strong>Price:</strong> &#8377; <%= listing.price.toLocaleString("en-IN") %>/night
+                </p>
+                <div class="btn-group" role="group">
+                  <a href="/listings/<%= listing._id %>" class="btn btn-outline-primary btn-sm">View</a>
+                  <a href="/listings/<%= listing._id %>/edit" class="btn btn-outline-secondary btn-sm">Edit</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    <% } else { %>
+      <p>You haven't created any listings yet. <a href="/listings/new">Create your first listing</a></p>
+    <% } %>
+  </div>
+</div>
+
+<!-- Booking Requests Received Section -->
+<div class="row mt-5">
+  <div class="col-12">
+    <h3>Booking Requests Received</h3>
+    <% if(receivedBookings.length > 0) { %>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Listing</th>
+              <th>Guest</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Guests</th>
+              <th>Total Price</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(let booking of receivedBookings) { %>
+              <tr>
+                <td><a href="/listings/<%= booking.listing._id %>"><%= booking.listing.title %></a></td>
+                <td><%= booking.booker.username %></td>
+                <td><%= new Date(booking.checkIn).toLocaleDateString() %></td>
+                <td><%= new Date(booking.checkOut).toLocaleDateString() %></td>
+                <td><%= booking.guests %></td>
+                <td>&#8377; <%= booking.totalPrice.toLocaleString("en-IN") %></td>
+                <td>
+                  <span class="badge bg-<%= booking.status === 'confirmed' ? 'success' : booking.status === 'cancelled' ? 'danger' : 'warning' %>">
+                    <%= booking.status.charAt(0).toUpperCase() + booking.status.slice(1) %>
+                  </span>
+                </td>
+                <td>
+                  <% if(booking.status === 'pending') { %>
+                    <form method="POST" action="/bookings/<%= booking._id %>?_method=PUT" class="d-inline">
+                      <input type="hidden" name="status" value="confirmed">
+                      <button type="submit" class="btn btn-success btn-sm">Confirm</button>
+                    </form>
+                    <form method="POST" action="/bookings/<%= booking._id %>?_method=PUT" class="d-inline">
+                      <input type="hidden" name="status" value="cancelled">
+                      <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+              <% if(booking.message) { %>
+                <tr>
+                  <td colspan="8">
+                    <strong>Message:</strong> <%= booking.message %>
+                  </td>
+                </tr>
+              <% } %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <p>You haven't received any booking requests yet.</p>
+    <% } %>
+  </div>
+</div>
+
+<!-- My Bookings Section -->
+<div class="row mt-5">
+  <div class="col-12">
+    <h3>My Bookings</h3>
+    <% if(myBookings.length > 0) { %>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Listing</th>
+              <th>Owner</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Guests</th>
+              <th>Total Price</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(let booking of myBookings) { %>
+              <tr>
+                <td><a href="/listings/<%= booking.listing._id %>"><%= booking.listing.title %></a></td>
+                <td><%= booking.owner.username %></td>
+                <td><%= new Date(booking.checkIn).toLocaleDateString() %></td>
+                <td><%= new Date(booking.checkOut).toLocaleDateString() %></td>
+                <td><%= booking.guests %></td>
+                <td>&#8377; <%= booking.totalPrice.toLocaleString("en-IN") %></td>
+                <td>
+                  <span class="badge bg-<%= booking.status === 'confirmed' ? 'success' : booking.status === 'cancelled' ? 'danger' : 'warning' %>">
+                    <%= booking.status.charAt(0).toUpperCase() + booking.status.slice(1) %>
+                  </span>
+                </td>
+              </tr>
+              <% if(booking.message) { %>
+                <tr>
+                  <td colspan="7">
+                    <strong>Your Message:</strong> <%= booking.message %>
+                  </td>
+                </tr>
+              <% } %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <p>You haven't made any bookings yet. <a href="/listings">Browse listings</a></p>
+    <% } %>
+  </div>
+</div>
