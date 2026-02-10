@@ -7,7 +7,7 @@ module.exports.showBookingForm = wrapAsync(async (req, res) => {
   const listing = await Listing.findById(id).populate("owner");
   if (!listing) {
     req.flash("error", "Listing not found");
-    return res.redirect("/listings");
+    res.redirect("/listings");
   }
   res.render("listings/book", { listing });
 });
@@ -19,7 +19,7 @@ module.exports.createBooking = wrapAsync(async (req, res) => {
   const listing = await Listing.findById(id).populate("owner");
   if (!listing) {
     req.flash("error", "Listing not found");
-    return res.redirect("/listings");
+    res.redirect("/listings");
   }
 
   // Calculate total price
@@ -79,13 +79,13 @@ module.exports.updateBookingStatus = wrapAsync(async (req, res) => {
     
   if (!booking) {
     req.flash("error", "Booking not found");
-    return res.redirect("/profile");
+    res.redirect("/profile");
   }
 
   // Check if current user is the owner of the listing
   if (!booking.owner.equals(req.user._id)) {
     req.flash("error", "You don't have permission to update this booking");
-    return res.redirect("/profile");
+    res.redirect("/profile");
   }
 
   booking.status = status;
