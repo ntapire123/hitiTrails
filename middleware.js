@@ -9,7 +9,6 @@ module.exports.isLoggedIn = (req, res, next) => {
     req.session.redirectUrl = req.originalUrl;
     req.flash("error", "You must be loggedin to access this feature");
     res.redirect("/login");
-    next();
   }
   next();
 };
@@ -28,12 +27,10 @@ module.exports.isOwner = async (req, res, next) => {
   if (!res.locals.currUser) {
     req.flash("error", "You must be logged in to access this feature!");
     res.redirect("/login");
-    next();
   }
   if (!listing.owner.equals(res.locals.currUser._id)) {
     req.flash("error", "You do not have permission to do that!");
     res.redirect(`/listings/${id}`);
-    next();
   }
   next();
 };
@@ -64,12 +61,10 @@ module.exports.isReviewAuthor = async (req, res, next) => {
   if (!res.locals.currUser) {
     req.flash("error", "You must be logged in to access this feature!");
     res.redirect("/login");
-    next();
   }
   if (!review.author.equals(res.locals.currUser._id)) {
     req.flash("error", "You do not have permission to do that!");
     res.redirect(`/listings/${id}`);
-    next();
   }
   next();
 };

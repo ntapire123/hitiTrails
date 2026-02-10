@@ -97,11 +97,6 @@ passport.deserializeUser(User.deserializeUser());
 
 // 8. FLASH + CURRENT USER LOCALS
 app.use((req, res, next) => {
-  console.log('🌐 REQUEST START:', req.method, req.originalUrl);
-  console.log('🌐 REQUEST HEADERS:', Object.keys(req.headers));
-  console.log('🌐 SESSION EXISTS:', !!req.session);
-  console.log('🌐 USER AUTHENTICATED:', !!req.user);
-  
   res.locals.success = req.flash("success") || [];
   res.locals.error = req.flash("error") || [];
   res.locals.currUser = req.user;
@@ -126,18 +121,8 @@ app.all("*", (req, res, next) => {
 
 // 11. ERROR HANDLER
 app.use((err, req, res, next) => {
-  console.log('🔍 ERROR HANDLER - Error occurred:', err);
-  console.log('🔍 ERROR HANDLER - Response headers already sent?', res.headersSent);
-  
-  // Only set status and render if headers haven't been sent yet
-  if (!res.headersSent) {
-    const { status = 500, message = "Something went wrong" } = err;
-    console.log('🔍 ERROR HANDLER - About to render error page, status:', status);
-    res.status(status).render("errors/err1.ejs", { message });
-    console.log('🔍 ERROR HANDLER - Error page rendered, headers sent:', res.headersSent);
-  } else {
-    console.log('🔍 ERROR HANDLER - Headers already sent, skipping render to prevent double response');
-  }
+  const { status = 500, message = "Something went wrong" } = err;
+  res.status(status).render("errors/err1.ejs", { message });
 });
 
 // 12. START SERVER
