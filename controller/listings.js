@@ -1,10 +1,11 @@
 const Listing = require("../models/listing");
 const ExpressError = require("../utils/ExpressError");
+const wrapAsync = require("../utils/wrapAsync");
 const { cloudinary } = require("../cloudConfig");
 const maptilerClient = require('@maptiler/client');
 maptilerClient.config.apiKey = process.env.MAP_TOKEN;
 
-module.exports.index = async (req, res, next) => {
+module.exports.index = wrapAsync(async (req, res, next) => {
   try {
 const { category, q } = req.query; // /listings?category=mountains  [web:77]
   let filter = {};
@@ -13,9 +14,6 @@ const { category, q } = req.query; // /listings?category=mountains  [web:77]
   if (category && category.toLowerCase() !== "trending") {
     filter.category = category.toLowerCase(); // matches your enum values [web:91]
   }
-
-
-
 
   // text search filter on title, country, location (case-insensitive)
     if (q && q.trim() !== "") {
@@ -27,22 +25,18 @@ const { category, q } = req.query; // /listings?category=mountains  [web:77]
       ];
     }
 
-
-
   const allListings = await Listing.find(filter);
   res.render("listings/index.ejs", { allListings, category: category || "trending" });
   } catch (err) {
     next(err);
   }
-
-  
-};
+});
 
 module.exports.renderNewFrom = (req, res) => {
   res.render("listings/newList.ejs");
 };
 
-module.exports.showListing = async (req, res, next) => {
+module.exports.showListing = wrapAsync(async (req, res, next) => {
   try {
     let { id } = req.params;
     const listing = await Listing.findById(id)
@@ -78,7 +72,7 @@ module.exports.showListing = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-};
+});
 
 module.exports.addNewListing = wrapAsync(async (req, res, next) => {
   try {
@@ -115,9 +109,9 @@ module.exports.addNewListing = wrapAsync(async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-};
+});
 
-module.exports.renderEditForm = async (req, res, next) => {
+module.exports.renderEditForm = wrapAsync(async (req, res, next) => {
   try {
     let { id } = req.params;
     const listing = await Listing.findById(id);
@@ -132,14 +126,12 @@ module.exports.renderEditForm = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-};
+});
 
-module.exports.updateListing = async (req, res, next) => {
+module.exports.updateListing = wrapAsync(async (req, res, next) => {
   try {
     let { id } = req.params;
-    console.log('updateListing: start', id);
     let listing = await Listing.findById(id);
-    console.log('updateListing: fetched listing');
 
     if (!listing) {
       throw new ExpressError(404, "Listing Not Found!");
@@ -158,10 +150,9 @@ module.exports.updateListing = async (req, res, next) => {
             type: 'Point',
             coordinates: coordinates
           };
-          console.log('updateListing: geocoded to', coordinates);
         }
       } catch (geoErr) {
-        console.log('updateListing: geocoding error', geoErr.message);
+        console.log("Geocoding error:", geoErr);
       }
     }
 
@@ -172,18 +163,15 @@ module.exports.updateListing = async (req, res, next) => {
       listing.image = { url, filename };
     }
 
-    console.log('updateListing: before save');
     await listing.save();
-    console.log('updateListing: after save');
     req.flash("success", "Listing Updated!");
     res.redirect(`/listings/${id}`);
   } catch (err) {
-    console.error('updateListing: error', err && err.message);
     next(err);
   }
-};
+});
 
-module.exports.deleteListing = async (req, res, next) => {
+module.exports.deleteListing = wrapAsync(async (req, res, next) => {
   try {
     let { id } = req.params;
     await Listing.findByIdAndDelete(id);
@@ -192,4 +180,4 @@ module.exports.deleteListing = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-};
+});
