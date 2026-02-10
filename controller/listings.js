@@ -84,7 +84,10 @@ module.exports.showListing = async (req, res, next) => {
 
 module.exports.addNewListing = async (req, res, next) => {
   try {
-    console.log('addNewListing: start');
+    console.log('📝 Full req.body:', JSON.stringify(req.body, null, 2));
+    console.log('📝 req.body.listing:', JSON.stringify(req.body.listing, null, 2));
+    console.log('📝 req.file:', req.file ? { filename: req.file.filename, secure_url: req.file.secure_url } : 'No file');
+
     if (!req.file) {
       console.log('addNewListing: missing req.file');
       throw new ExpressError(400, "Image upload required!");
@@ -97,6 +100,8 @@ module.exports.addNewListing = async (req, res, next) => {
       url: req.file.secure_url, 
       filename: req.file.filename 
     };
+
+    console.log('📋 Listing object before save:', newListing);
 
     // Geocode the location
     if (newListing.location) {
@@ -115,8 +120,6 @@ module.exports.addNewListing = async (req, res, next) => {
       }
     }
 
-    console.log('addNewListing: before save');
-    
     // Test validation before saving
     try {
       await newListing.validate();
@@ -127,11 +130,12 @@ module.exports.addNewListing = async (req, res, next) => {
     }
     
     await newListing.save();
-    console.log('addNewListing: after save');
+    console.log('✅ Listing saved successfully');
+    
     req.flash("success", "New listing created!");
     res.redirect("/listings");
   } catch (err) {
-    console.error('addNewListing: error', err && err.message);
+    console.log('❌ Error creating listing:', err.message);
     next(err);
   }
 };
