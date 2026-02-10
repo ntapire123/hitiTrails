@@ -4,7 +4,6 @@ const { cloudinary } = require("../cloudConfig");
 const maptilerClient = require('@maptiler/client');
 maptilerClient.config.apiKey = process.env.MAP_TOKEN;
 
-
 module.exports.index = async (req, res, next) => {
   try {
 const { category, q } = req.query; // /listings?category=mountains  [web:77]
@@ -37,7 +36,6 @@ const { category, q } = req.query; // /listings?category=mountains  [web:77]
   }
 
   
-  
 };
 
 module.exports.renderNewFrom = (req, res) => {
@@ -64,7 +62,7 @@ module.exports.showListing = async (req, res, next) => {
         const geoResults = await maptilerClient.geocoding.forward(listing.location);
         if (geoResults.features && geoResults.features.length > 0) {
           coordinates = geoResults.features[0].geometry.coordinates;
-          // Update the listing with geocoded coordinates
+          // Update listing with geocoded coordinates
           listing.geometry = {
             type: 'Point',
             coordinates: coordinates
@@ -82,7 +80,7 @@ module.exports.showListing = async (req, res, next) => {
   }
 };
 
-module.exports.addNewListing = async (req, res, next) => {
+module.exports.addNewListing = wrapAsync(async (req, res, next) => {
   try {
     if (!req.file) {
       throw new ExpressError(400, "Image upload required!");
@@ -150,7 +148,7 @@ module.exports.updateListing = async (req, res, next) => {
     // Update listing data
     Object.assign(listing, req.body.listing);
 
-    // Geocode the location if it was updated
+    // Geocode location if it was updated
     if (req.body.listing.location) {
       try {
         const geoResults = await maptilerClient.geocoding.forward(req.body.listing.location);
@@ -181,6 +179,17 @@ module.exports.updateListing = async (req, res, next) => {
     res.redirect(`/listings/${id}`);
   } catch (err) {
     console.error('updateListing: error', err && err.message);
+    next(err);
+  }
+};
+
+module.exports.deleteListing = async (req, res, next) => {
+  try {
+    let { id } = req.params;
+    await Listing.findByIdAndDelete(id);
+    req.flash("success", "Listing Deleted!");
+    res.redirect("/listings");
+  } catch (err) {
     next(err);
   }
 };
