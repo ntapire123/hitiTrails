@@ -121,8 +121,12 @@ app.all("*", (req, res, next) => {
 
 // 11. ERROR HANDLER
 app.use((err, req, res, next) => {
+  console.log('🔍 ERROR HANDLER - Error occurred:', err);
+  console.log('🔍 ERROR HANDLER - Response headers already sent?', res.headersSent);
   const { status = 500, message = "Something went wrong" } = err;
+  console.log('🔍 ERROR HANDLER - About to render error page, status:', status);
   res.status(status).render("errors/err1.ejs", { message });
+  console.log('🔍 ERROR HANDLER - Error page rendered');
 });
 
 // 12. START SERVER
