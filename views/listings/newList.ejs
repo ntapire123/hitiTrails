@@ -13,6 +13,19 @@
                 <textarea name="listing[description]" class="form-control" required></textarea>
                 <div class="invalid-feedback">Please enter a short description.</div>
             </div>
+
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select name="listing[category]" class="form-control" required>
+                    <option value="">Select a category</option>
+                    <option value="mountains">Mountains</option>
+                    <option value="beaches">Beaches</option>
+                    <option value="city">City</option>
+                    <option value="international">International</option>
+                    <option value="trending">Trending</option>
+                </select>
+                <div class="invalid-feedback">Please select a category.</div>
+            </div>
           
             <div class="mb-3">
                 <label for="image" class="form-label">Upload image</label>
