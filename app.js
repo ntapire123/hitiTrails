@@ -97,6 +97,11 @@ passport.deserializeUser(User.deserializeUser());
 
 // 8. FLASH + CURRENT USER LOCALS
 app.use((req, res, next) => {
+  console.log('🌐 REQUEST START:', req.method, req.originalUrl);
+  console.log('🌐 REQUEST HEADERS:', Object.keys(req.headers));
+  console.log('🌐 SESSION EXISTS:', !!req.session);
+  console.log('🌐 USER AUTHENTICATED:', !!req.user);
+  
   res.locals.success = req.flash("success") || [];
   res.locals.error = req.flash("error") || [];
   res.locals.currUser = req.user;
