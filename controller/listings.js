@@ -56,12 +56,7 @@ module.exports.showListing = wrapAsync(async (req, res, next) => {
         const geoResults = await maptilerClient.geocoding.forward(listing.location);
         if (geoResults.features && geoResults.features.length > 0) {
           coordinates = geoResults.features[0].geometry.coordinates;
-          // Update listing with geocoded coordinates
-          listing.geometry = {
-            type: 'Point',
-            coordinates: coordinates
-          };
-          await listing.save();
+          // Don't save here - just use coordinates for rendering
         }
       } catch (geoErr) {
         console.log("Geocoding error:", geoErr);
