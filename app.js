@@ -97,10 +97,8 @@ passport.deserializeUser(User.deserializeUser());
 
 // 8. FLASH + CURRENT USER LOCALS
 app.use((req, res, next) => {
-  const successFlash = req.flash("success");
-  const errorFlash = req.flash("error");
-  res.locals.success = Array.isArray(successFlash) ? successFlash : [];
-  res.locals.error = Array.isArray(errorFlash) ? errorFlash : [];
+  res.locals.success = req.flash("success") || [];
+  res.locals.error = req.flash("error") || [];
   res.locals.currUser = req.user;
   next();
 });
