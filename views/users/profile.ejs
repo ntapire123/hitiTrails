@@ -59,7 +59,7 @@
           <tbody>
             <% for(let booking of receivedBookings) { %>
               <tr>
-                <td><a href="/listings/<%= booking.listing._id %>"><%= booking.listing.title %></a></td>
+                <td><% if(booking.listing) { %><a href="/listings/<%= booking.listing._id %>"><%= booking.listing.title %></a><% } else { %>Listing Deleted<% } %></td>
                 <td><%= booking.booker.username %></td>
                 <td><%= new Date(booking.checkIn).toLocaleDateString() %></td>
                 <td><%= new Date(booking.checkOut).toLocaleDateString() %></td>
@@ -121,7 +121,7 @@
           <tbody>
             <% for(let booking of myBookings) { %>
               <tr>
-                <td><a href="/listings/<%= booking.listing._id %>"><%= booking.listing.title %></a></td>
+                <td><% if(booking.listing) { %><a href="/listings/<%= booking.listing._id %>"><%= booking.listing.title %></a><% } else { %>Listing Deleted<% } %></td>
                 <td><%= booking.owner.username %></td>
                 <td><%= new Date(booking.checkIn).toLocaleDateString() %></td>
                 <td><%= new Date(booking.checkOut).toLocaleDateString() %></td>
