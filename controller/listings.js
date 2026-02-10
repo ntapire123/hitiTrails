@@ -116,6 +116,16 @@ module.exports.addNewListing = async (req, res, next) => {
     }
 
     console.log('addNewListing: before save');
+    
+    // Test validation before saving
+    try {
+      await newListing.validate();
+      console.log('✅ Listing validation passed');
+    } catch (validationError) {
+      console.log('❌ Listing validation failed:', validationError.message);
+      return next(validationError);
+    }
+    
     await newListing.save();
     console.log('addNewListing: after save');
     req.flash("success", "New listing created!");
@@ -188,17 +198,6 @@ module.exports.updateListing = async (req, res, next) => {
     res.redirect(`/listings/${id}`);
   } catch (err) {
     console.error('updateListing: error', err && err.message);
-    next(err);
-  }
-};
-
-module.exports.deleteListing = async (req, res, next) => {
-  try {
-    let { id } = req.params;
-    await Listing.findByIdAndDelete(id);
-    req.flash("success", "Listing Deleted!");
-    res.redirect("/listings");
-  } catch (err) {
     next(err);
   }
 };
